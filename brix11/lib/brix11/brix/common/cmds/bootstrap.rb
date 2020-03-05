@@ -17,7 +17,8 @@ module BRIX11
 
       OPTIONS = {
         :target => 'AXCIOMA',
-        :tags => {}
+        :tags => {},
+        :shallow => false
       }
 
       def self.setup(optparser, options)
@@ -39,6 +40,9 @@ module BRIX11
           id, tag = v.split(':')
           BRIX11.log_fatal("Missing required tag for component in [--tag #{v}].") unless tag
           options[:bootstrap][:tags][id] = tag
+        end
+        optparser.on('-s', '--shallow-clone', 'Only clone the required tags of git repositories') do |v|
+          options[:bootstrap][:shallow] = true
         end
       end
 
@@ -63,10 +67,15 @@ module BRIX11
               Sys.mkdir(bse['dir'])
               Sys.in_dir(bse['dir']) do
                 tag = bse['tag'] || options[:bootstrap][:tags][bse['id']] || 'master'
-                rc, _, _ = Exec.runcmd('git', 'clone', bse['repo'], '.')
-                BRIX11.log_fatal("Failed to clone #{bse['id']} repository : #{bse['repo']}") unless rc
-                rc,_, _ = Exec.runcmd('git', 'checkout', tag)
-                BRIX11.log_fatal("Failed to checkout #{bse['id']} repository tag : #{tag}") unless rc
+                if options[:bootstrap][:shallow]
+                  rc, _, _ = Exec.runcmd('git', 'clone', '--single-branch', '--depth', '1', '--branch', tag, bse['repo'], '.')
+                  BRIX11.log_fatal("Failed to clone #{bse['id']} repository : #{bse['repo']}, tag : #{tag}") unless rc
+                else
+                  rc, _, _ = Exec.runcmd('git', 'clone', bse['repo'], '.')
+                  BRIX11.log_fatal("Failed to clone #{bse['id']} repository : #{bse['repo']}") unless rc
+                  rc,_, _ = Exec.runcmd('git', 'checkout', tag)
+                  BRIX11.log_fatal("Failed to checkout #{bse['id']} repository tag : #{tag}") unless rc
+                end
               end
             end
           end

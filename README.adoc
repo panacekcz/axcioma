@@ -1,13 +1,11 @@
-image:https://img.shields.io/badge/scoreboard-Remedy IT-brightgreen.svg[Scoreboard, link=https://www.axcioma.org/scoreboard.html]
-image:https://dev.azure.com/remedyit/axcioma/_apis/build/status/axcioma?branchName=master[Azure pipeline, link=https://dev.azure.com/remedyit/axcioma/_build?definitionId=2&_a=summary]
-image:https://www.codefactor.io/repository/github/remedyit/axcioma/badge[CodeFactor, link=https://www.codefactor.io/repository/github/remedyit/axcioma]
-
 = Building AXCIOMA or TAOX11
 
-This is the main repository for https://www.axcioma.org[AXCIOMA] and https://www.taox11.org[TAOX11].
+This is a fork of https://github.com/RemedyIT/axcioma[the main repository] for https://www.axcioma.org[AXCIOMA] and https://www.taox11.org[TAOX11].
 AXCIOMA and TAOX11 are created and maintained by https://www.remedy.nl[Remedy IT].
 This repository contains the bootstrap tooling to obtain AXCIOMA or TAOX11 and to generate the necessary
 configuration using link:brix11/docs/src/brix11.adoc[BRIX11].
+
+In this fork, the bootstrap command has an additional option to make shallow clones of repositories, to speed up bootstrapping.
 
 == Prerequisites
 
@@ -37,7 +35,7 @@ After cloning this repository to your local system you need to
 
 This can be done all together by executing the following commands
 
- bin/brix11 bootstrap
+ bin/brix11 bootstrap -s
  bin/brix11 configure
  bin/brix11 gen build workspace.mwc
  bin/brix11 make
@@ -48,11 +46,11 @@ For all commands additional help is available by executing `bin/brix11 help _com
 
 AXCIOMA is the default target for bootstrapping. The bootstrap command will clone all dependent git repositories to their expected location. This can be done by executing
 
- bin/brix11 bootstrap
+ bin/brix11 bootstrap -s
 
 TAOX11 can be specified as optional target, which is done using
 
- bin/brix11 bootstrap taox11
+ bin/brix11 bootstrap -s taox11
 
 == Configure
 
